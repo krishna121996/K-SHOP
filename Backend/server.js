@@ -3,7 +3,8 @@ import cors from 'cors';
 import { connectDB } from './Config/db.js';
 import mongoose from "mongoose";
 import foodRouter from './routes/foodRoute.js';
-
+import userRouter from './routes/userRoutes.js';
+import 'dotenv/config';
 
 //app config
 const app = express();
@@ -19,7 +20,7 @@ connectDB()
 // Api end point
 app.use('/api/food', foodRouter)
 app.use('/images', express.static('uploads'))
-
+app.use("/api/user", userRouter)
 
 
 //mongodb+srv://krishnaprasath00:tljAb8r7m8PoJWEJ@cluster0.7jedlwq.mongodb.net/?
