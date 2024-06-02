@@ -8,6 +8,7 @@ import Placeorder from './pages/PlaceOrder/Placeorder'
 
 const App = () => {
   return (
+    // App changes
     <div className='app'>
       <Navbar/>
       <Routes>
