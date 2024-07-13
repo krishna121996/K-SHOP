@@ -1,15 +1,16 @@
 import { useState } from "react";
 import { useEffect } from "react";
 import { createContext } from "react";
-import { food_list } from "../assets/assets";
+// import { food_list } from "../assets/assets";
 
 
 export const StoreContext = createContext(null);
 
 const StoreContextProvider = (props) => {
- 
-    const [cartItems, setCartItems] = useState({});
 
+    const url = 'http://localhost:4000/'
+    const [cartItems, setCartItems] = useState({});
+    const [food_list, setFoodList] = useState([]);
     const addToCart = (itemId) => {
 
         if (!cartItems[itemId]) {
@@ -20,22 +21,45 @@ const StoreContextProvider = (props) => {
     }
 
     const removeFromCart = (itemId) => {
-        setCartItems((prev) => ({...prev, [itemId]: prev[itemId] - 1}))
+        setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] - 1 }))
     }
-    const contextValue ={
-       food_list,
-       cartItems,
-       setCartItems,
-       addToCart,
-       removeFromCart
-    }
-useEffect(() => {
-    console.log('>>>>>>>', cartItems)
-}, [cartItems])
 
-    return(
+    useEffect(() => {
+        fetchFoodList()
+    }, [])
+
+    const fetchFoodList = async () => {
+        const response  = await fetch(url + 'api/food/list')
+        .then(response => response.json())
+        .then(data => setFoodList(data?.foodList))
+        .catch(error => console.error(error));
+    }
+
+    const getTotalCartAmount = () => {
+        let totalAmount = 0;
+        for (const item in cartItems) {
+            if (cartItems[item] > 0) {
+                let itemInfo = food_list.find((product) => product._id === item);
+                totalAmount += itemInfo.price * cartItems[item];
+            }
+        }
+        return totalAmount;
+    }
+
+    const contextValue = {
+        food_list,
+        cartItems,
+        setCartItems,
+        addToCart,
+        removeFromCart,
+        getTotalCartAmount,
+        url
+    }
+
+
+    return (
         <StoreContext.Provider value={contextValue}>
-           {props.children}
+            {props.children}
         </StoreContext.Provider>
     )
 }
